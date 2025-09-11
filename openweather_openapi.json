@@ -1,0 +1,302 @@
+{
+        "openapi": "3.0.0",
+        "info": {
+            "title": "OpenWeather API",
+            "version": "2.5",
+            "description": "Get weather data for any location on Earth including over 200,000 cities",
+            "contact": {
+                "name": "OpenWeather API",
+                "url": "https://openweathermap.org/api"
+            }
+        },
+        "servers": [
+            {
+                "url": "https://api.openweathermap.org/data/2.5",
+                "description": "OpenWeather API server"
+            }
+        ],
+        "security": [
+            {
+                "ApiKeyAuth": []
+            }
+        ],
+        "components": {
+            "securitySchemes": {
+                "ApiKeyAuth": {
+                    "type": "apiKey",
+                    "in": "query",
+                    "name": "appid"
+                }
+            },
+            "schemas": {
+                "Weather": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "integer"},
+                        "main": {"type": "string"},
+                        "description": {"type": "string"},
+                        "icon": {"type": "string"}
+                    }
+                },
+                "Main": {
+                    "type": "object",
+                    "properties": {
+                        "temp": {"type": "number"},
+                        "feels_like": {"type": "number"},
+                        "temp_min": {"type": "number"},
+                        "temp_max": {"type": "number"},
+                        "pressure": {"type": "integer"},
+                        "humidity": {"type": "integer"}
+                    }
+                },
+                "Wind": {
+                    "type": "object",
+                    "properties": {
+                        "speed": {"type": "number"},
+                        "deg": {"type": "integer"},
+                        "gust": {"type": "number"}
+                    }
+                },
+                "Clouds": {
+                    "type": "object",
+                    "properties": {
+                        "all": {"type": "integer"}
+                    }
+                },
+                "Sys": {
+                    "type": "object",
+                    "properties": {
+                        "type": {"type": "integer"},
+                        "id": {"type": "integer"},
+                        "country": {"type": "string"},
+                        "sunrise": {"type": "integer"},
+                        "sunset": {"type": "integer"}
+                    }
+                },
+                "Coord": {
+                    "type": "object",
+                    "properties": {
+                        "lon": {"type": "number"},
+                        "lat": {"type": "number"}
+                    }
+                },
+                "CurrentWeatherResponse": {
+                    "type": "object",
+                    "properties": {
+                        "coord": {"$ref": "#/components/schemas/Coord"},
+                        "weather": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/Weather"}
+                        },
+                        "base": {"type": "string"},
+                        "main": {"$ref": "#/components/schemas/Main"},
+                        "visibility": {"type": "integer"},
+                        "wind": {"$ref": "#/components/schemas/Wind"},
+                        "clouds": {"$ref": "#/components/schemas/Clouds"},
+                        "dt": {"type": "integer"},
+                        "sys": {"$ref": "#/components/schemas/Sys"},
+                        "timezone": {"type": "integer"},
+                        "id": {"type": "integer"},
+                        "name": {"type": "string"},
+                        "cod": {"type": "integer"}
+                    }
+                },
+                "ForecastItem": {
+                    "type": "object",
+                    "properties": {
+                        "dt": {"type": "integer"},
+                        "main": {"$ref": "#/components/schemas/Main"},
+                        "weather": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/Weather"}
+                        },
+                        "clouds": {"$ref": "#/components/schemas/Clouds"},
+                        "wind": {"$ref": "#/components/schemas/Wind"},
+                        "visibility": {"type": "integer"},
+                        "pop": {"type": "number"},
+                        "dt_txt": {"type": "string"}
+                    }
+                },
+                "ForecastResponse": {
+                    "type": "object",
+                    "properties": {
+                        "cod": {"type": "string"},
+                        "message": {"type": "integer"},
+                        "cnt": {"type": "integer"},
+                        "list": {
+                            "type": "array",
+                            "items": {"$ref": "#/components/schemas/ForecastItem"}
+                        },
+                        "city": {
+                            "type": "object",
+                            "properties": {
+                                "id": {"type": "integer"},
+                                "name": {"type": "string"},
+                                "coord": {"$ref": "#/components/schemas/Coord"},
+                                "country": {"type": "string"},
+                                "population": {"type": "integer"},
+                                "timezone": {"type": "integer"},
+                                "sunrise": {"type": "integer"},
+                                "sunset": {"type": "integer"}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "paths": {
+            "/weather": {
+                "get": {
+                    "summary": "Get current weather data",
+                    "description": "Access current weather data for any location on Earth including over 200,000 cities",
+                    "operationId": "getCurrentWeather",
+                    "parameters": [
+                        {
+                            "name": "q",
+                            "in": "query",
+                            "description": "City name, state code and country code divided by comma (e.g., London,uk or New York,NY,US)",
+                            "required": "False",
+                            "schema": {"type": "string"},
+                            "example": "London,uk"
+                        },
+                        {
+                            "name": "lat",
+                            "in": "query",
+                            "description": "Latitude",
+                            "required": "False",
+                            "schema": {"type": "number"},
+                            "example": 35
+                        },
+                        {
+                            "name": "lon",
+                            "in": "query",
+                            "description": "Longitude",
+                            "required": "False",
+                            "schema": {"type": "number"},
+                            "example": 139
+                        },
+                        {
+                            "name": "units",
+                            "in": "query",
+                            "description": "Units of measurement (standard, metric, imperial)",
+                            "required": "False",
+                            "schema": {
+                                "type": "string",
+                                "enum": ["standard", "metric", "imperial"],
+                                "default": "standard"
+                            }
+                        },
+                        {
+                            "name": "lang",
+                            "in": "query",
+                            "description": "Language for weather description",
+                            "required": "False",
+                            "schema": {"type": "string", "default": "en"}
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Successful response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/CurrentWeatherResponse"}
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Bad request"
+                        },
+                        "401": {
+                            "description": "Unauthorized - Invalid API key"
+                        },
+                        "404": {
+                            "description": "Not found - City not found"
+                        },
+                        "429": {
+                            "description": "Too many requests"
+                        }
+                    },
+                    "security": [{"ApiKeyAuth": []}]
+                }
+            },
+            "/forecast": {
+                "get": {
+                    "summary": "Get 5 day weather forecast",
+                    "description": "5 day weather forecast with data every 3 hours",
+                    "operationId": "getWeatherForecast",
+                    "parameters": [
+                        {
+                            "name": "q",
+                            "in": "query",
+                            "description": "City name, state code and country code divided by comma",
+                            "required": "False",
+                            "schema": {"type": "string"},
+                            "example": "London,uk"
+                        },
+                        {
+                            "name": "lat",
+                            "in": "query",
+                            "description": "Latitude",
+                            "required": "False",
+                            "schema": {"type": "number"}
+                        },
+                        {
+                            "name": "lon",
+                            "in": "query",
+                            "description": "Longitude",
+                            "required": "False",
+                            "schema": {"type": "number"}
+                        },
+                        {
+                            "name": "cnt",
+                            "in": "query",
+                            "description": "Number of timestamps to return (max 40)",
+                            "required": "False",
+                            "schema": {"type": "integer", "maximum": 40}
+                        },
+                        {
+                            "name": "units",
+                            "in": "query",
+                            "description": "Units of measurement",
+                            "required": "False",
+                            "schema": {
+                                "type": "string",
+                                "enum": ["standard", "metric", "imperial"],
+                                "default": "standard"
+                            }
+                        },
+                        {
+                            "name": "lang",
+                            "in": "query",
+                            "description": "Language for weather description",
+                            "required": "False",
+                            "schema": {"type": "string", "default": "en"}
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Successful response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {"$ref": "#/components/schemas/ForecastResponse"}
+                                }
+                            }
+                        },
+                        "400": {
+                            "description": "Bad request"
+                        },
+                        "401": {
+                            "description": "Unauthorized - Invalid API key"
+                        },
+                        "404": {
+                            "description": "Not found - City not found"
+                        },
+                        "429": {
+                            "description": "Too many requests"
+                        }
+                    },
+                    "security": [{"ApiKeyAuth": []}]
+                }
+            }
+        }
+}
